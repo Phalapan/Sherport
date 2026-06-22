@@ -295,9 +295,10 @@
 
 <script>
 // ══════════════════════════════════════
-// CONSTANTS & GLOBALS
+// CONSTANTS
 // ══════════════════════════════════════
-const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly';
+// ✅ ใช้ scope drive เต็ม เพื่อให้ย้ายไฟล์ได้
+const SCOPES = 'https://www.googleapis.com/auth/drive';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 const ROOT_FOLDER_NAME = 'Portfolio_ลูกสาว';
 const DATA_FILE_NAME   = 'portfolio_data.json';
@@ -331,8 +332,9 @@ function setupAndInit() {
   startApp();
 }
 function resetSetup() {
-  if (!confirm('ต้องการเปลี่ยนการตั้งค่า API?')) return;
+  if (!confirm('ต้องการเปลี่ยนการตั้งค่า?\n(ต้อง Sign In ใหม่)')) return;
   localStorage.removeItem(CONFIG_KEY);
+  sessionStorage.clear();
   location.reload();
 }
 function startApp() {
@@ -344,23 +346,20 @@ function startApp() {
 }
 
 // ══════════════════════════════════════
-// SYNC STATUS
+// SYNC STATUS BAR
 // ══════════════════════════════════════
 function setSyncStatus(state, text) {
-  const dot = document.getElementById('syncDot');
+  const dot  = document.getElementById('syncDot');
   const span = document.getElementById('syncText');
   dot.className = 'sync-dot' + (state==='syncing' ? ' syncing' : state==='error' ? ' error' : '');
   span.textContent = text;
 }
 
 // ══════════════════════════════════════
-// LOCAL CACHE (fallback เท่านั้น)
+// LOCAL CACHE
 // ══════════════════════════════════════
 function loadFromCache() {
-  try {
-    const cached = localStorage.getItem(LS_CACHE_KEY);
-    items = cached ? JSON.parse(cached) : [];
-  } catch(e) { items = []; }
+  try { items = JSON.parse(localStorage.getItem(LS_CACHE_KEY) || '[]'); } catch(e) { items = []; }
   setSyncStatus('offline', 'ข้อมูล cache — Sign in เพื่อซิงค์ทุกอุปกรณ์');
 }
 function saveToCache() {
@@ -368,7 +367,7 @@ function saveToCache() {
 }
 
 // ══════════════════════════════════════
-// GOOGLE APIs
+// GOOGLE APIs LOADER
 // ══════════════════════════════════════
 function loadGoogleAPIs() {
   const s1 = document.createElement('script');
@@ -386,9 +385,12 @@ function loadGoogleAPIs() {
   s2.src = 'https://accounts.google.com/gsi/client';
   s2.onload = () => {
     tokenClient = google.accounts.oauth2.initTokenClient({
-      client_id: CLIENT_ID, scope: SCOPES, callback: handleTokenResponse,
+      client_id: CLIENT_ID,
+      scope: SCOPES,
+      callback: handleTokenResponse,
     });
-    gis_loaded = true; tryAutoSignIn();
+    gis_loaded = true;
+    tryAutoSignIn();
   };
   document.body.appendChild(s2);
 }
@@ -404,7 +406,8 @@ function tryAutoSignIn() {
 }
 function handleSignIn() {
   if (!gapi_loaded || !gis_loaded) { showToast('⏳ กำลังโหลด Google API...'); return; }
-  tokenClient.requestAccessToken({ prompt: '' });
+  // ✅ prompt:'consent' เพื่อให้ขอ scope ใหม่เสมอถ้า scope เปลี่ยน
+  tokenClient.requestAccessToken({ prompt: 'consent' });
 }
 function handleTokenResponse(resp) {
   if (resp.error) { setSyncStatus('error','Sign in ล้มเหลว'); showToast('❌ '+resp.error, true); return; }
@@ -461,7 +464,7 @@ async function refreshAll() {
 }
 
 // ══════════════════════════════════════
-// DRIVE READ / WRITE  ← แก้ bug ทั้งหมดที่นี่
+// DRIVE READ / WRITE
 // ══════════════════════════════════════
 async function findDataFile() {
   if (!folderIds.root) return null;
@@ -476,32 +479,27 @@ async function findDataFile() {
 async function loadFromDrive() {
   dataFileId = await findDataFile();
   if (!dataFileId) {
-    // ยังไม่มีไฟล์ → สร้างใหม่จาก cache
-    await saveToDrive();
+    await saveToDrive(); // สร้างไฟล์ใหม่จาก cache
     return;
   }
-  // ✅ แก้: fetch ถูกต้อง
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files/${dataFileId}?alt=media`,
     { headers: { Authorization: 'Bearer ' + accessToken } }
   );
   if (!res.ok) throw new Error('โหลดไฟล์ไม่ได้: HTTP ' + res.status);
-  const text = await res.text();
   try {
-    const data = JSON.parse(text);
+    const data = await res.json();
     items = Array.isArray(data) ? data : [];
-  } catch(e) {
-    items = [];
-  }
+  } catch(e) { items = []; }
   saveToCache();
 }
 
 async function saveToDrive() {
-  if (!accessToken || !folderIds.root) return;
+  if (!accessToken || !folderIds.root) { saveToCache(); return; }
   const content = JSON.stringify(items, null, 2);
 
   if (dataFileId) {
-    // ✅ แก้: PATCH update — ใส่ ( ) ให้ fetch
+    // ✅ PATCH update ไฟล์เดิม
     const res = await fetch(
       `https://www.googleapis.com/upload/drive/v3/files/${dataFileId}?uploadType=media`,
       {
@@ -515,19 +513,17 @@ async function saveToDrive() {
     );
     if (!res.ok) throw new Error('อัปเดตไฟล์ไม่ได้: HTTP ' + res.status);
   } else {
-    // ✅ แก้: multipart create ถูกต้อง
-    const boundary = '-------314159265358979323846';
-    const delimiter = '\r\n--' + boundary + '\r\n';
-    const closeDelimiter = '\r\n--' + boundary + '--';
-    const metaStr = JSON.stringify({ name: DATA_FILE_NAME, parents: [folderIds.root] });
+    // ✅ สร้างไฟล์ใหม่ด้วย multipart (raw string — mobile safe)
+    const boundary = 'fo0bar_boundary_xyzxyz';
+    const metaStr  = JSON.stringify({ name: DATA_FILE_NAME, parents: [folderIds.root] });
     const body =
-      delimiter +
-      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
-      metaStr +
-      delimiter +
-      'Content-Type: application/json\r\n\r\n' +
-      content +
-      closeDelimiter;
+      `--${boundary}\r\n` +
+      `Content-Type: application/json; charset=UTF-8\r\n\r\n` +
+      `${metaStr}\r\n` +
+      `--${boundary}\r\n` +
+      `Content-Type: application/json\r\n\r\n` +
+      `${content}\r\n` +
+      `--${boundary}--`;
 
     const res = await fetch(
       'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
@@ -535,7 +531,7 @@ async function saveToDrive() {
         method: 'POST',
         headers: {
           Authorization: 'Bearer ' + accessToken,
-          'Content-Type': 'multipart/related; boundary=' + boundary,
+          'Content-Type': `multipart/related; boundary=${boundary}`,
         },
         body: body,
       }
@@ -551,7 +547,6 @@ async function saveToDrive() {
 // FOLDER MANAGEMENT
 // ══════════════════════════════════════
 async function ensureFolder(name, parentId) {
-  // ✅ แก้: เพิ่ม space ก่อน and
   const parentQ = parentId ? ` and '${parentId}' in parents` : '';
   const res = await gapi.client.drive.files.list({
     q: `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false${parentQ}`,
@@ -578,18 +573,39 @@ async function ensureJobFolder(jobTitle, catKey) {
   return await ensureFolder(safeName, folderIds[catKey]);
 }
 
+// ✅ ใช้ fetch แทน gapi เพื่อให้ย้ายไฟล์ได้แน่นอน
 async function moveFilesToFolder(files, targetFolderId) {
   for (const f of files) {
     try {
-      const meta = await gapi.client.drive.files.get({ fileId: f.id, fields: 'parents' });
-      const prev = (meta.result.parents || []).join(',');
-      await gapi.client.drive.files.update({
-        fileId: f.id,
-        addParents: targetFolderId,
-        removeParents: prev,
-        fields: 'id',
-      });
-    } catch(e) { console.warn('move file error:', f.name, e); }
+      // Step 1: ดึง parents ปัจจุบัน
+      const metaRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${f.id}?fields=parents`,
+        { headers: { Authorization: 'Bearer ' + accessToken } }
+      );
+      if (!metaRes.ok) { console.warn('ดึง parents ไม่ได้:', f.name); continue; }
+      const metaJson    = await metaRes.json();
+      const prevParents = (metaJson.parents || []).join(',');
+
+      // Step 2: ย้ายไฟล์
+      const moveRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${f.id}` +
+        `?addParents=${encodeURIComponent(targetFolderId)}` +
+        `&removeParents=${encodeURIComponent(prevParents)}` +
+        `&fields=id,parents`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: 'Bearer ' + accessToken,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({}),
+        }
+      );
+      if (!moveRes.ok) {
+        const err = await moveRes.json().catch(()=>({}));
+        console.warn('ย้ายไม่ได้:', f.name, moveRes.status, err?.error?.message);
+      }
+    } catch(e) { console.warn('moveFilesToFolder error:', f.name, e); }
   }
 }
 
@@ -613,8 +629,10 @@ function pickerCallback(data) {
   if (data.action === google.picker.Action.PICKED) {
     data.docs.forEach(doc => {
       if (!selectedFiles.find(f => f.id === doc.id))
-        selectedFiles.push({ id:doc.id, name:doc.name, mimeType:doc.mimeType,
-          webViewLink:doc.url, thumbnailLink:doc.iconUrl });
+        selectedFiles.push({
+          id: doc.id, name: doc.name, mimeType: doc.mimeType,
+          webViewLink: doc.url, thumbnailLink: doc.iconUrl,
+        });
     });
     renderFileList();
   }
@@ -635,15 +653,15 @@ function getFileIcon(m) {
   if (m.startsWith('image/')) return '🖼️';
   if (m === 'application/pdf') return '📄';
   if (m.includes('word')) return '📝';
-  if (m.includes('spreadsheet') || m.includes('excel')) return '📊';
-  if (m.includes('presentation') || m.includes('powerpoint')) return '📑';
+  if (m.includes('spreadsheet')||m.includes('excel')) return '📊';
+  if (m.includes('presentation')||m.includes('powerpoint')) return '📑';
   if (m.startsWith('video/')) return '🎬';
   if (m.startsWith('audio/')) return '🎵';
   return '📎';
 }
 
 // ══════════════════════════════════════
-// SAVE / DELETE
+// SAVE / DELETE PORTFOLIO
 // ══════════════════════════════════════
 async function savePortfolio() {
   const title = document.getElementById('fTitle').value.trim();
@@ -656,6 +674,7 @@ async function savePortfolio() {
     setSavingOverlay(true, `📁 สร้างโฟลเดอร์ "${title}"...`, `ใน ${catInfo.folderName}`);
     jobFolderId   = await ensureJobFolder(title, catKey);
     jobFolderName = title.substring(0, 80);
+
     if (selectedFiles.length && jobFolderId) {
       setSavingOverlay(true, `📎 ย้ายไฟล์เข้า "${title}"...`, `${selectedFiles.length} ไฟล์`);
       await moveFilesToFolder(selectedFiles, jobFolderId);
@@ -664,14 +683,12 @@ async function savePortfolio() {
 
   const newItem = {
     id: editingId || Date.now().toString(),
-    title,
-    cat: catKey,
+    title, cat: catKey,
     date: document.getElementById('fDate').value,
     desc: document.getElementById('fDesc').value.trim(),
     files: [...selectedFiles],
     catFolderName: catInfo.folderName,
-    jobFolderName,
-    jobFolderId,
+    jobFolderName, jobFolderId,
     createdAt: editingId
       ? (items.find(x => x.id === editingId)?.createdAt || Date.now())
       : Date.now(),
@@ -689,8 +706,8 @@ async function savePortfolio() {
     await saveToDrive();
     showToast(editingId ? '✅ แก้ไขผลงานแล้ว' : '🎉 บันทึกลง Drive แล้ว!');
   } catch(e) {
-    showToast('⚠️ บันทึก Drive ไม่ได้ เก็บ cache แทน', true);
     saveToCache();
+    showToast('⚠️ Drive ไม่ได้ เก็บ cache แทน', true);
   }
   setSavingOverlay(false);
   setSyncStatus('ok', 'บันทึกแล้ว ' + formatDateTime(new Date()));
@@ -703,7 +720,7 @@ async function deleteItem(id) {
   if (!confirm('ต้องการลบผลงานนี้?')) return;
   items = items.filter(x => x.id !== id);
   closeModal('detailModal');
-  setSavingOverlay(true, '🗑️ กำลังลบและบันทึกขึ้น Drive...', '');
+  setSavingOverlay(true, '🗑️ กำลังลบ...', '');
   try { await saveToDrive(); } catch(e) { saveToCache(); }
   setSavingOverlay(false);
   renderAll();
@@ -757,7 +774,6 @@ function renderDonut(counts) {
   const ctx    = canvas.getContext('2d');
   const cats   = Object.entries(catMeta);
   const total  = cats.reduce((s,[k]) => s+(counts[k]||0), 0) || 1;
-  // ✅ แก้: * Math.PI * 2 ถูกต้อง
   const data   = cats.map(([k,m]) => ({ val:counts[k]||0, color:m.color, label:m.label, icon:m.icon }));
   ctx.clearRect(0,0,140,140);
   let a = -Math.PI/2;
@@ -767,7 +783,7 @@ function renderDonut(counts) {
     ctx.fillStyle = d.color; ctx.fill(); a += s;
   });
   ctx.beginPath(); ctx.arc(70,70,36,0,Math.PI*2);
-  ctx.fillStyle = '#fff'; ctx.fill();
+  ctx.fillStyle='#fff'; ctx.fill();
   ctx.fillStyle='#2D2D3A'; ctx.font='bold 18px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(total,70,63); ctx.font='11px Segoe UI'; ctx.fillStyle='#888'; ctx.fillText('ผลงาน',70,79);
   document.getElementById('donutLegend').innerHTML = data.map(d => `
@@ -779,11 +795,11 @@ function renderDonut(counts) {
 
 function renderRecentList() {
   const el = document.getElementById('recentList');
-  const recent = [...items].sort((a,b) => b.createdAt-a.createdAt).slice(0,5);
+  const recent = [...items].sort((a,b)=>b.createdAt-a.createdAt).slice(0,5);
   if (!recent.length) { el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px">ยังไม่มีผลงาน</div>'; return; }
   el.innerHTML = recent.map(item => {
     const meta    = catMeta[item.cat]||catMeta.art;
-    const imgFile = item.files?.find(f => f.mimeType?.startsWith('image/'));
+    const imgFile = item.files?.find(f=>f.mimeType?.startsWith('image/'));
     const thumb   = imgFile
       ? `<img src="https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w100" alt="">`
       : meta.icon;
@@ -802,12 +818,12 @@ function renderRecentList() {
 function renderFileTypes() {
   const el = document.getElementById('filetypeRow');
   const tally = {};
-  items.forEach(it => (it.files||[]).forEach(f => {
-    const ic = getFileIcon(f.mimeType); tally[ic] = (tally[ic]||0)+1;
+  items.forEach(it=>(it.files||[]).forEach(f=>{
+    const ic = getFileIcon(f.mimeType); tally[ic]=(tally[ic]||0)+1;
   }));
   if (!Object.keys(tally).length) { el.innerHTML='<div style="color:var(--muted);font-size:13px">ยังไม่มีไฟล์แนบ</div>'; return; }
-  const lbl = {'🖼️':'รูปภาพ','📄':'PDF','📝':'Word','📊':'Excel','📑':'PPT','🎬':'วิดีโอ','🎵':'เสียง','📎':'อื่นๆ'};
-  el.innerHTML = Object.entries(tally).map(([ic,n]) => `
+  const lbl={'🖼️':'รูปภาพ','📄':'PDF','📝':'Word','📊':'Excel','📑':'PPT','🎬':'วิดีโอ','🎵':'เสียง','📎':'อื่นๆ'};
+  el.innerHTML = Object.entries(tally).map(([ic,n])=>`
     <div class="filetype-chip"><span>${ic}</span>
       <div><div style="font-size:11px;color:var(--muted)">${lbl[ic]||'ไฟล์'}</div><div class="filetype-num">${n} ไฟล์</div></div>
     </div>`).join('');
@@ -818,52 +834,45 @@ async function renderFolderTree() {
   if (!folderIds.root) { el.innerHTML='<div style="color:var(--muted);font-size:13px">ยังไม่ได้ Sign In</div>'; return; }
   el.innerHTML='<div style="color:var(--muted);font-size:12px">กำลังโหลดจาก Drive...</div>';
   try {
-    // ✅ แก้: q: ถูกต้อง ไม่ใช้ template literal ผิด
     const subRes = await gapi.client.drive.files.list({
       q: `'${folderIds.root}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-      fields: 'files(id,name,webViewLink)',
-      orderBy: 'name',
-      spaces: 'drive',
+      fields: 'files(id,name,webViewLink)', orderBy: 'name', spaces: 'drive',
     });
-    const catFolders = subRes.result.files || [];
+    const catFolders = subRes.result.files||[];
     let html = `<div class="ftree-root">📁 ${ROOT_FOLDER_NAME}</div>`;
     for (const cf of catFolders) {
-      // ✅ แก้: q: ถูกต้อง
       const jobRes = await gapi.client.drive.files.list({
         q: `'${cf.id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-        fields: 'files(id,name,webViewLink)',
-        orderBy: 'name',
-        spaces: 'drive',
+        fields: 'files(id,name,webViewLink)', orderBy: 'name', spaces: 'drive',
       });
-      const jobs = jobRes.result.files || [];
+      const jobs = jobRes.result.files||[];
       html += `<a class="ftree-sub" href="${cf.webViewLink||'#'}" target="_blank" style="font-weight:700">${cf.name}<span class="ftree-count">${jobs.length}</span></a>`;
-      // ✅ แก้: += ถูกต้อง
       jobs.forEach(j => { html += `<a class="ftree-sub ftree-job" href="${j.webViewLink||'#'}" target="_blank">📂 ${j.name}</a>`; });
     }
     if (!catFolders.length) html += '<div style="color:var(--muted);font-size:12px;padding:8px 14px">ยังไม่มีโฟลเดอร์</div>';
     el.innerHTML = html;
-  } catch(e) { el.innerHTML='<div style="color:var(--muted);font-size:12px">โหลดไม่ได้: '+e.message+'</div>'; }
+  } catch(e) { el.innerHTML=`<div style="color:var(--muted);font-size:12px">โหลดไม่ได้: ${e.message}</div>`; }
 }
 
 // ══════════════════════════════════════
-// PORTFOLIO GRID
+// PORTFOLIO MODAL
 // ══════════════════════════════════════
 function openAddModal(id=null) {
   editingId=id; selectedFiles=[];
   if (id) {
-    const item = items.find(x => x.id===id); if (!item) return;
-    document.getElementById('modalTitle').textContent = '✏️ แก้ไขผลงาน';
-    document.getElementById('fTitle').value = item.title;
-    document.getElementById('fCat').value   = item.cat;
-    document.getElementById('fDate').value  = item.date||'';
-    document.getElementById('fDesc').value  = item.desc||'';
-    selectedFiles = item.files ? [...item.files] : [];
+    const item=items.find(x=>x.id===id); if(!item) return;
+    document.getElementById('modalTitle').textContent='✏️ แก้ไขผลงาน';
+    document.getElementById('fTitle').value=item.title;
+    document.getElementById('fCat').value=item.cat;
+    document.getElementById('fDate').value=item.date||'';
+    document.getElementById('fDesc').value=item.desc||'';
+    selectedFiles=item.files?[...item.files]:[];
   } else {
-    document.getElementById('modalTitle').textContent = '➕ เพิ่มผลงานใหม่';
-    document.getElementById('fTitle').value = '';
-    document.getElementById('fCat').value   = 'art';
-    document.getElementById('fDate').value  = new Date().toISOString().split('T')[0];
-    document.getElementById('fDesc').value  = '';
+    document.getElementById('modalTitle').textContent='➕ เพิ่มผลงานใหม่';
+    document.getElementById('fTitle').value='';
+    document.getElementById('fCat').value='art';
+    document.getElementById('fDate').value=new Date().toISOString().split('T')[0];
+    document.getElementById('fDesc').value='';
   }
   renderFileList();
   document.getElementById('addModal').classList.add('open');
@@ -871,16 +880,17 @@ function openAddModal(id=null) {
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function openDetail(id) {
-  const item = items.find(x => x.id===id); if (!item) return;
+  const item=items.find(x=>x.id===id); if(!item) return;
   const meta    = catMeta[item.cat]||catMeta.art;
-  const imgFile = item.files?.find(f => f.mimeType?.startsWith('image/'));
-  // ✅ แก้: ternary ถูกต้อง
+  const imgFile = item.files?.find(f=>f.mimeType?.startsWith('image/'));
   const heroSrc = imgFile ? `https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w800` : null;
   const filesHtml = item.files?.length ? `
     <div class="detail-files"><h4>📎 ไฟล์แนบ (${item.files.length} ไฟล์)</h4>
-      ${item.files.map(f=>`<a class="detail-file-link" href="${f.webViewLink}" target="_blank">
-        <span>${getFileIcon(f.mimeType)}</span><span style="flex:1">${f.name}</span>
-        <span style="font-size:11px;color:var(--muted)">เปิดใน Drive ↗</span></a>`).join('')}
+      ${item.files.map(f=>`
+        <a class="detail-file-link" href="${f.webViewLink}" target="_blank">
+          <span>${getFileIcon(f.mimeType)}</span><span style="flex:1">${f.name}</span>
+          <span style="font-size:11px;color:var(--muted)">เปิดใน Drive ↗</span>
+        </a>`).join('')}
     </div>` : '';
   const pathBadge = item.jobFolderName
     ? `<div class="detail-badge">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>` : '';
@@ -895,11 +905,11 @@ function openDetail(id) {
       : `<div class="detail-hero"><div class="no-hero">${meta.icon}</div></div>`}
     <div class="detail-title">${item.title}</div>
     <div class="detail-meta">
-      ${item.date ? `<div class="detail-badge">📅 ${formatDate(item.date)}</div>` : ''}
-      ${item.files?.length ? `<div class="detail-badge">📎 ${item.files.length} ไฟล์</div>` : ''}
+      ${item.date?`<div class="detail-badge">📅 ${formatDate(item.date)}</div>`:''}
+      ${item.files?.length?`<div class="detail-badge">📎 ${item.files.length} ไฟล์</div>`:''}
       ${pathBadge}
     </div>
-    ${item.desc ? `<div class="detail-desc">${item.desc.replace(/\n/g,'<br>')}</div>` : ''}
+    ${item.desc?`<div class="detail-desc">${item.desc.replace(/\n/g,'<br>')}</div>`:''}
     ${filesHtml}
     <div style="display:flex;gap:10px;margin-top:24px">
       <button class="btn-cancel" style="flex:1" onclick="closeModal('detailModal');openAddModal('${item.id}')">✏️ แก้ไข</button>
@@ -909,26 +919,24 @@ function openDetail(id) {
 }
 
 function filterCategory(btn) {
-  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
-  btn.classList.add('active'); currentFilter = btn.dataset.cat;
-  const t = {all:'✨ ผลงานทั้งหมด',art:'🎨 ศิลปะ',academic:'📚 วิชาการ',activity:'🎭 กิจกรรม',sport:'🏆 กีฬา'};
-  document.getElementById('sectionTitle').textContent = t[currentFilter]||'';
+  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active'); currentFilter=btn.dataset.cat;
+  const t={all:'✨ ผลงานทั้งหมด',art:'🎨 ศิลปะ',academic:'📚 วิชาการ',activity:'🎭 กิจกรรม',sport:'🏆 กีฬา'};
+  document.getElementById('sectionTitle').textContent=t[currentFilter]||'';
   renderGrid();
 }
 
 function renderGrid() {
-  const filtered = items.filter(x => currentFilter==='all' || x.cat===currentFilter);
-  const grid = document.getElementById('portfolioGrid');
+  const filtered=items.filter(x=>currentFilter==='all'||x.cat===currentFilter);
+  const grid=document.getElementById('portfolioGrid');
   if (!filtered.length) {
-    // ✅ แก้: = ถูกต้อง
-    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📂</div><h3>ยังไม่มีผลงานในหมวดนี้</h3><p>กดปุ่ม "เพิ่มผลงาน" เพื่อเริ่มบันทึก</p></div>`;
+    grid.innerHTML=`<div class="empty-state"><div class="empty-icon">📂</div><h3>ยังไม่มีผลงานในหมวดนี้</h3><p>กดปุ่ม "เพิ่มผลงาน" เพื่อเริ่มบันทึก</p></div>`;
     return;
   }
-  grid.innerHTML = filtered.map(item => {
-    const meta     = catMeta[item.cat]||catMeta.art;
-    const imgFile  = item.files?.find(f => f.mimeType?.startsWith('image/'));
-    // ✅ แก้: ternary ถูกต้อง
-    const thumbUrl = imgFile ? `https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w400` : null;
+  grid.innerHTML=filtered.map(item=>{
+    const meta=catMeta[item.cat]||catMeta.art;
+    const imgFile=item.files?.find(f=>f.mimeType?.startsWith('image/'));
+    const thumbUrl=imgFile?`https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w400`:null;
     return `<div class="portfolio-card" onclick="openDetail('${item.id}')">
       <div class="card-thumb">
         ${thumbUrl
@@ -940,11 +948,11 @@ function renderGrid() {
       <div class="card-body">
         <div class="card-title">${item.title}</div>
         <div class="card-meta">
-          ${item.date ? `<span>📅 ${formatDate(item.date)}</span>` : ''}
-          ${item.files?.length ? `<span>📎 ${item.files.length} ไฟล์</span>` : ''}
+          ${item.date?`<span>📅 ${formatDate(item.date)}</span>`:''}
+          ${item.files?.length?`<span>📎 ${item.files.length} ไฟล์</span>`:''}
         </div>
-        ${item.jobFolderName ? `<div class="card-folder">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>` : ''}
-        ${item.desc ? `<div class="card-desc">${item.desc}</div>` : ''}
+        ${item.jobFolderName?`<div class="card-folder">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>`:''}
+        ${item.desc?`<div class="card-desc">${item.desc}</div>`:''}
         <div class="card-actions">
           <button class="btn-icon" onclick="event.stopPropagation();openAddModal('${item.id}')">✏️ แก้ไข</button>
           <button class="btn-icon" onclick="event.stopPropagation();deleteItem('${item.id}')">🗑️</button>
@@ -958,9 +966,9 @@ function renderGrid() {
 // PAGE NAV
 // ══════════════════════════════════════
 function switchPage(btn) {
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+btn.dataset.page).classList.add('active');
 }
 
@@ -968,32 +976,32 @@ function switchPage(btn) {
 // UTILS
 // ══════════════════════════════════════
 function formatDate(d) {
-  if (!d) return '';
+  if(!d) return '';
   return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 }
 function formatDateTime(d) {
   return d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
 }
 let toastTimer;
-function showToast(msg, isError=false) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.background = isError ? '#C0392B' : '#1E1E2E';
+function showToast(msg,isError=false) {
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.style.background=isError?'#C0392B':'#1E1E2E';
   t.classList.add('show'); clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
+  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
 }
-document.querySelectorAll('.modal-overlay').forEach(el => {
-  el.addEventListener('click', e => { if (e.target===el) el.classList.remove('open'); });
+document.querySelectorAll('.modal-overlay').forEach(el=>{
+  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
 });
 let resizeTimer;
-window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer=setTimeout(renderGrid,150); });
+window.addEventListener('resize',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(renderGrid,150); });
 
 // ══════════════════════════════════════
 // INIT
 // ══════════════════════════════════════
-window.addEventListener('load', () => {
-  const cfg = JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');
-  if (cfg?.CLIENT_ID && cfg?.API_KEY) {
-    CLIENT_ID = cfg.CLIENT_ID; API_KEY = cfg.API_KEY; startApp();
+window.addEventListener('load',()=>{
+  const cfg=JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');
+  if(cfg?.CLIENT_ID && cfg?.API_KEY){
+    CLIENT_ID=cfg.CLIENT_ID; API_KEY=cfg.API_KEY; startApp();
   }
 });
 </script>
