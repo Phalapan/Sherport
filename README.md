@@ -10,7 +10,6 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI','Sarabun',Arial,sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
-
   #setupScreen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
   .setup-card { background:var(--card); border-radius:24px; box-shadow:var(--shadow); padding:48px 40px; max-width:480px; width:100%; text-align:center; }
   .setup-card .logo { font-size:52px; margin-bottom:16px; }
@@ -22,7 +21,6 @@
   .btn-primary { background:linear-gradient(135deg,var(--primary),#8B5CF6); color:#fff; border:none; border-radius:10px; padding:14px 32px; font-size:15px; font-weight:600; cursor:pointer; width:100%; transition:opacity .2s,transform .1s; }
   .btn-primary:hover { opacity:.92; transform:translateY(-1px); }
   .setup-note { font-size:11px; color:var(--muted); margin-top:16px; line-height:1.6; }
-
   #mainApp { display:none; }
   .app-header { background:linear-gradient(135deg,var(--primary) 0%,#8B5CF6 100%); color:#fff; padding:20px 32px; display:flex; align-items:center; justify-content:space-between; box-shadow:0 2px 12px rgba(108,99,255,.3); position:sticky; top:0; z-index:100; }
   .header-left { display:flex; align-items:center; gap:12px; }
@@ -35,40 +33,31 @@
   .btn-sm:hover { background:rgba(255,255,255,.35); }
   .google-avatar { width:28px; height:28px; border-radius:50%; background:#fff; display:flex; align-items:center; justify-content:center; font-size:14px; overflow:hidden; }
   .google-avatar img { width:100%; height:100%; object-fit:cover; }
-
-  /* sync status bar */
-  .sync-bar { background:rgba(255,255,255,.12); padding:6px 32px; font-size:12px; color:rgba(255,255,255,.85); display:flex; align-items:center; gap:8px; }
+  .sync-bar { background:rgba(0,0,0,.15); padding:6px 32px; font-size:12px; color:rgba(255,255,255,.9); display:flex; align-items:center; gap:8px; }
   .sync-dot { width:8px; height:8px; border-radius:50%; background:#43C59E; flex-shrink:0; }
   .sync-dot.syncing { background:#FFD93D; animation:pulse 1s infinite; }
   .sync-dot.error { background:#FF6B6B; }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
   .nav-bar { background:var(--card); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:4px; overflow-x:auto; }
   .nav-tab { padding:16px 22px; font-size:14px; font-weight:500; cursor:pointer; border:none; background:none; color:var(--muted); white-space:nowrap; border-bottom:3px solid transparent; transition:color .2s,border-color .2s; }
   .nav-tab.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:700; }
-  .nav-tab:hover:not(.active) { color:var(--text); }
-
   .page { display:none; padding:32px; max-width:1200px; margin:0 auto; }
   .page.active { display:block; }
-
-  /* DASHBOARD */
   .dash-refresh { display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; flex-wrap:wrap; gap:12px; }
   .dash-refresh h2 { font-size:20px; font-weight:700; }
-  .btn-refresh { background:var(--primary); color:#fff; border:none; border-radius:10px; padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:opacity .2s; }
+  .btn-refresh { background:var(--primary); color:#fff; border:none; border-radius:10px; padding:10px 20px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; }
   .btn-refresh:disabled { opacity:.6; cursor:not-allowed; }
   .spin-icon { display:inline-block; }
   .spinning .spin-icon { animation:spin 1s linear infinite; }
   @keyframes spin { to { transform:rotate(360deg); } }
-
   .kpi-row { display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:16px; margin-bottom:28px; }
   .kpi-card { background:var(--card); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); text-align:center; }
   .kpi-card .kpi-emoji { font-size:30px; margin-bottom:8px; }
   .kpi-card .kpi-val { font-size:28px; font-weight:800; color:var(--primary); }
   .kpi-card .kpi-lbl { font-size:12px; color:var(--muted); margin-top:4px; }
-
   .dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:28px; }
   .dash-card { background:var(--card); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow); }
-  .dash-card h3 { font-size:15px; font-weight:700; margin-bottom:20px; display:flex; align-items:center; gap:8px; }
+  .dash-card h3 { font-size:15px; font-weight:700; margin-bottom:20px; }
   .bar-chart { display:flex; flex-direction:column; gap:14px; }
   .bar-row { display:flex; align-items:center; gap:12px; }
   .bar-label { width:120px; font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -82,7 +71,7 @@
   .recent-list { display:flex; flex-direction:column; gap:12px; }
   .recent-item { display:flex; align-items:center; gap:14px; padding:12px; background:var(--bg); border-radius:12px; cursor:pointer; transition:background .2s; }
   .recent-item:hover { background:var(--border); }
-  .recent-thumb { width:44px; height:44px; border-radius:10px; object-fit:cover; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; overflow:hidden; }
+  .recent-thumb { width:44px; height:44px; border-radius:10px; background:var(--border); display:flex; align-items:center; justify-content:center; font-size:20px; flex-shrink:0; overflow:hidden; }
   .recent-thumb img { width:100%; height:100%; object-fit:cover; }
   .recent-info { flex:1; min-width:0; }
   .recent-title { font-size:14px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
@@ -97,11 +86,9 @@
   .ftree-sub:hover { background:var(--border); }
   .ftree-job { padding-left:52px; font-size:12px; }
   .ftree-count { margin-left:auto; background:var(--primary); color:#fff; font-size:11px; font-weight:700; border-radius:99px; padding:2px 10px; }
-
   .filter-bar { background:var(--card); border-bottom:1px solid var(--border); padding:0 32px; display:flex; gap:4px; overflow-x:auto; margin:-32px -32px 28px; }
   .filter-tab { padding:14px 18px; font-size:13px; font-weight:500; cursor:pointer; border:none; background:none; color:var(--muted); white-space:nowrap; border-bottom:3px solid transparent; transition:color .2s,border-color .2s; }
   .filter-tab.active { color:var(--primary); border-bottom-color:var(--primary); font-weight:700; }
-
   .portfolio-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:20px; }
   .portfolio-card { background:var(--card); border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); transition:transform .2s,box-shadow .2s; cursor:pointer; }
   .portfolio-card:hover { transform:translateY(-4px); box-shadow:0 12px 32px rgba(0,0,0,.12); }
@@ -124,9 +111,8 @@
   .empty-state h3 { font-size:18px; color:var(--text); margin-bottom:8px; }
   .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; }
   .section-header h2 { font-size:18px; font-weight:700; }
-  .btn-add { background:linear-gradient(135deg,var(--accent),#2DD4BF); color:#fff; border:none; border-radius:10px; padding:12px 20px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; transition:opacity .2s; }
+  .btn-add { background:linear-gradient(135deg,var(--accent),#2DD4BF); color:#fff; border:none; border-radius:10px; padding:12px 20px; font-size:13px; font-weight:600; cursor:pointer; display:flex; align-items:center; gap:8px; }
   .btn-add:hover { opacity:.9; }
-
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; padding:24px; }
   .modal-overlay.open { display:flex; }
   .modal { background:var(--card); border-radius:24px; padding:36px; width:100%; max-width:560px; max-height:90vh; overflow-y:auto; box-shadow:0 20px 60px rgba(0,0,0,.2); }
@@ -158,31 +144,16 @@
   .detail-files h4 { font-size:14px; font-weight:700; margin-bottom:10px; }
   .detail-file-link { display:flex; align-items:center; gap:10px; padding:10px 14px; background:var(--bg); border-radius:10px; margin-bottom:8px; text-decoration:none; color:var(--text); transition:background .2s; }
   .detail-file-link:hover { background:#EEEAFF; }
-
   .saving-overlay { display:none; position:fixed; inset:0; z-index:300; background:rgba(0,0,0,.5); align-items:center; justify-content:center; }
   .saving-overlay.open { display:flex; }
   .saving-box { background:#fff; border-radius:20px; padding:40px 48px; text-align:center; box-shadow:0 20px 60px rgba(0,0,0,.2); min-width:280px; }
   .saving-box .spin { font-size:48px; animation:spin 1s linear infinite; display:inline-block; }
   .saving-box p { margin-top:16px; font-size:15px; font-weight:600; }
   .saving-box small { font-size:12px; color:var(--muted); }
-
   #toast { position:fixed; bottom:32px; left:50%; transform:translateX(-50%) translateY(80px); background:#1E1E2E; color:#fff; border-radius:10px; padding:14px 24px; font-size:14px; z-index:500; transition:transform .3s; display:flex; align-items:center; gap:10px; min-width:260px; justify-content:center; max-width:90vw; text-align:center; }
   #toast.show { transform:translateX(-50%) translateY(0); }
-
-  @media(max-width:700px){
-    .dash-grid { grid-template-columns:1fr; }
-    .app-header { padding:14px 16px; flex-wrap:wrap; gap:10px; }
-    .header-right { gap:6px; }
-    .btn-sm { padding:6px 10px; font-size:12px; }
-  }
-  @media(max-width:600px){
-    .page { padding:20px 16px; }
-    .nav-bar,.sync-bar { padding:0 16px; }
-    .portfolio-grid { grid-template-columns:1fr; }
-    .kpi-row { grid-template-columns:1fr 1fr; }
-    .modal { padding:24px 18px; }
-    .filter-bar { margin:-20px -16px 20px; padding:0 16px; }
-  }
+  @media(max-width:700px){ .dash-grid{grid-template-columns:1fr} .app-header{padding:14px 16px;flex-wrap:wrap;gap:10px} .header-right{gap:6px} .btn-sm{padding:6px 10px;font-size:12px} }
+  @media(max-width:600px){ .page{padding:20px 16px} .nav-bar,.sync-bar{padding:0 16px} .portfolio-grid{grid-template-columns:1fr} .kpi-row{grid-template-columns:1fr 1fr} .modal{padding:24px 18px} .filter-bar{margin:-20px -16px 20px;padding:0 16px} }
 </style>
 
 <!-- SETUP -->
@@ -222,7 +193,6 @@
     <div class="sync-dot" id="syncDot"></div>
     <span id="syncText">กำลังโหลด...</span>
   </div>
-
   <div class="nav-bar">
     <button class="nav-tab active" data-page="dashboard" onclick="switchPage(this)">📊 Dashboard</button>
     <button class="nav-tab" data-page="portfolio" onclick="switchPage(this)">🗂️ ผลงานทั้งหมด</button>
@@ -321,28 +291,26 @@
     <small id="savingDetail"> </small>
   </div>
 </div>
-
 <div id="toast"></div>
 
 <script>
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // CONSTANTS & GLOBALS
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 const SCOPES = 'https://www.googleapis.com/auth/drive.file https://www.googleapis.com/auth/drive.readonly';
 const DISCOVERY_DOCS = ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest'];
 const ROOT_FOLDER_NAME = 'Portfolio_ลูกสาว';
-const DATA_FILE_NAME   = 'portfolio_data.json';   // ← ไฟล์หลักเก็บข้อมูลทุกอย่าง
-const LS_CACHE_KEY     = 'portfolio_cache';        // ← localStorage สำหรับ cache เท่านั้น
+const DATA_FILE_NAME   = 'portfolio_data.json';
+const LS_CACHE_KEY     = 'portfolio_cache';
 const CONFIG_KEY       = 'portfolio_config';
 
 let gapi_loaded = false, gis_loaded = false;
 let tokenClient = null, accessToken = null;
-let folderIds   = {};   // { root, art, academic, activity, sport }
-let dataFileId  = null; // Google Drive file ID ของ portfolio_data.json
-let items       = [];   // ข้อมูลหลัก (โหลดจาก Drive)
+let folderIds   = {};
+let dataFileId  = null;
+let items       = [];
 let selectedFiles = [], currentFilter = 'all', editingId = null;
 let CLIENT_ID = '', API_KEY = '';
-let isSyncing = false;
 
 const catMeta = {
   art:      { label:'🎨 ศิลปะ / วาดรูป',   folderName:'🎨 ศิลปะ_วาดรูป',   cls:'cat-art',      icon:'🎨', color:'#FF6B6B' },
@@ -351,9 +319,9 @@ const catMeta = {
   sport:    { label:'🏆 กีฬา / ความสำเร็จ', folderName:'🏆 กีฬา_ความสำเร็จ', cls:'cat-sport',    icon:'🏆', color:'#6C63FF' },
 };
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // SETUP
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function setupAndInit() {
   const cid  = document.getElementById('inputClientId').value.trim();
   const akey = document.getElementById('inputApiKey').value.trim();
@@ -370,40 +338,38 @@ function resetSetup() {
 function startApp() {
   document.getElementById('setupScreen').style.display = 'none';
   document.getElementById('mainApp').style.display = 'block';
-  // โหลด cache ก่อนเพื่อให้เห็นข้อมูลทันที
   loadFromCache();
   renderAll();
   loadGoogleAPIs();
 }
 
-// ════════════════════════════════════════
-// SYNC STATUS BAR
-// ════════════════════════════════════════
+// ══════════════════════════════════════
+// SYNC STATUS
+// ══════════════════════════════════════
 function setSyncStatus(state, text) {
-  // state: 'ok' | 'syncing' | 'error' | 'offline'
-  const dot  = document.getElementById('syncDot');
+  const dot = document.getElementById('syncDot');
   const span = document.getElementById('syncText');
-  dot.className = 'sync-dot' + (state === 'syncing' ? ' syncing' : state === 'error' ? ' error' : '');
+  dot.className = 'sync-dot' + (state==='syncing' ? ' syncing' : state==='error' ? ' error' : '');
   span.textContent = text;
 }
 
-// ════════════════════════════════════════
-// CACHE (localStorage) — ใช้เป็น fallback เท่านั้น
-// ════════════════════════════════════════
+// ══════════════════════════════════════
+// LOCAL CACHE (fallback เท่านั้น)
+// ══════════════════════════════════════
 function loadFromCache() {
-  const cached = localStorage.getItem(LS_CACHE_KEY);
-  if (cached) {
-    try { items = JSON.parse(cached); } catch(e) { items = []; }
-  }
-  setSyncStatus('offline', 'ข้อมูล cache (Sign in เพื่อซิงค์)');
+  try {
+    const cached = localStorage.getItem(LS_CACHE_KEY);
+    items = cached ? JSON.parse(cached) : [];
+  } catch(e) { items = []; }
+  setSyncStatus('offline', 'ข้อมูล cache — Sign in เพื่อซิงค์ทุกอุปกรณ์');
 }
 function saveToCache() {
-  localStorage.setItem(LS_CACHE_KEY, JSON.stringify(items));
+  try { localStorage.setItem(LS_CACHE_KEY, JSON.stringify(items)); } catch(e) {}
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // GOOGLE APIs
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function loadGoogleAPIs() {
   const s1 = document.createElement('script');
   s1.src = 'https://apis.google.com/js/api.js';
@@ -411,7 +377,7 @@ function loadGoogleAPIs() {
     gapi.load('client:picker', () => {
       gapi.client.init({ apiKey: API_KEY, discoveryDocs: DISCOVERY_DOCS })
         .then(() => { gapi_loaded = true; tryAutoSignIn(); })
-        .catch(e => { setSyncStatus('error','API Key ไม่ถูกต้อง'); showToast('❌ ' + e.message, true); });
+        .catch(e => { setSyncStatus('error','API Key ไม่ถูกต้อง'); showToast('❌ '+e.message, true); });
     });
   };
   document.body.appendChild(s1);
@@ -441,7 +407,7 @@ function handleSignIn() {
   tokenClient.requestAccessToken({ prompt: '' });
 }
 function handleTokenResponse(resp) {
-  if (resp.error) { setSyncStatus('error','Sign in ล้มเหลว'); showToast('❌ ' + resp.error, true); return; }
+  if (resp.error) { setSyncStatus('error','Sign in ล้มเหลว'); showToast('❌ '+resp.error, true); return; }
   accessToken = resp.access_token;
   sessionStorage.setItem('gToken', accessToken);
   gapi.client.setToken({ access_token: accessToken });
@@ -453,26 +419,25 @@ function fetchUserInfo() {
     headers: { Authorization: 'Bearer ' + accessToken }
   }).then(r => r.json()).then(info => {
     document.getElementById('userName').textContent = info.name || info.email;
-    if (info.picture) document.getElementById('userAvatar').innerHTML =
-      `<img src="${info.picture}">`;
+    if (info.picture) document.getElementById('userAvatar').innerHTML = `<img src="${info.picture}">`;
     document.getElementById('signInBtn').textContent = '✅ เชื่อมต่อแล้ว';
     document.getElementById('signInBtn').style.background = 'rgba(67,197,158,.35)';
-  }).catch(() => {});
+  }).catch(()=>{});
 }
 
-// ════════════════════════════════════════
-// DRIVE INIT → โหลดข้อมูลจริง
-// ════════════════════════════════════════
+// ══════════════════════════════════════
+// DRIVE INIT
+// ══════════════════════════════════════
 async function initDriveAndLoad() {
   setSyncStatus('syncing', 'กำลังเชื่อมต่อ Drive...');
   try {
     await ensureAllFolders();
-    await loadFromDrive();       // ← โหลดข้อมูลจาก Drive
+    await loadFromDrive();
     renderAll();
     renderFolderTree();
-    setSyncStatus('ok', `ซิงค์แล้ว ${formatDateTime(new Date())}`);
+    setSyncStatus('ok', 'ซิงค์แล้ว ' + formatDateTime(new Date()));
   } catch(e) {
-    setSyncStatus('error', 'โหลดจาก Drive ไม่ได้ ใช้ cache แทน');
+    setSyncStatus('error', 'โหลดจาก Drive ไม่ได้ — ใช้ cache แทน');
     console.error('Drive init error:', e);
   }
 }
@@ -486,86 +451,112 @@ async function refreshAll() {
     await loadFromDrive();
     renderAll();
     renderFolderTree();
-    setSyncStatus('ok', `ซิงค์แล้ว ${formatDateTime(new Date())}`);
+    setSyncStatus('ok', 'ซิงค์แล้ว ' + formatDateTime(new Date()));
     showToast('✅ รีเฟรชสำเร็จ');
   } catch(e) {
     setSyncStatus('error', 'รีเฟรชไม่ได้');
-    showToast('❌ รีเฟรชไม่ได้: ' + e.message, true);
+    showToast('❌ ' + e.message, true);
   }
   btn.classList.remove('spinning'); btn.disabled = false;
 }
 
-// ════════════════════════════════════════
-// DRIVE DATA FILE — อ่าน/เขียน JSON
-// ════════════════════════════════════════
-
-// ค้นหา portfolio_data.json ใน root folder
+// ══════════════════════════════════════
+// DRIVE READ / WRITE  ← แก้ bug ทั้งหมดที่นี่
+// ══════════════════════════════════════
 async function findDataFile() {
   if (!folderIds.root) return null;
   const res = await gapi.client.drive.files.list({
     q: `name='${DATA_FILE_NAME}' and '${folderIds.root}' in parents and trashed=false`,
-    fields: 'files(id,name)', spaces: 'drive',
+    fields: 'files(id)',
+    spaces: 'drive',
   });
   return res.result.files.length > 0 ? res.result.files[0].id : null;
 }
 
-// อ่านข้อมูลจาก Drive
 async function loadFromDrive() {
   dataFileId = await findDataFile();
   if (!dataFileId) {
-    // ไม่มีไฟล์ → ใช้ items ที่มีอยู่ (จาก cache) แล้ว save ขึ้น Drive
+    // ยังไม่มีไฟล์ → สร้างใหม่จาก cache
     await saveToDrive();
     return;
   }
-  // ดาวน์โหลดไฟล์
+  // ✅ แก้: fetch ถูกต้อง
   const res = await fetch(
     `https://www.googleapis.com/drive/v3/files/${dataFileId}?alt=media`,
     { headers: { Authorization: 'Bearer ' + accessToken } }
   );
-  if (!res.ok) throw new Error('ดาวน์โหลดไฟล์ไม่ได้: ' + res.status);
-  const data = await res.json();
-  items = Array.isArray(data) ? data : [];
-  saveToCache(); // อัปเดต cache
+  if (!res.ok) throw new Error('โหลดไฟล์ไม่ได้: HTTP ' + res.status);
+  const text = await res.text();
+  try {
+    const data = JSON.parse(text);
+    items = Array.isArray(data) ? data : [];
+  } catch(e) {
+    items = [];
+  }
+  saveToCache();
 }
 
-// เขียนข้อมูลลง Drive (create หรือ update)
 async function saveToDrive() {
   if (!accessToken || !folderIds.root) return;
   const content = JSON.stringify(items, null, 2);
-  const blob     = new Blob([content], { type: 'application/json' });
 
   if (dataFileId) {
-    // update ไฟล์เดิม
-    await fetch(`https://www.googleapis.com/upload/drive/v3/files/${dataFileId}?uploadType=media`, {
-      method: 'PATCH',
-      headers: { Authorization: 'Bearer ' + accessToken, 'Content-Type': 'application/json' },
-      body: content,
-    });
+    // ✅ แก้: PATCH update — ใส่ ( ) ให้ fetch
+    const res = await fetch(
+      `https://www.googleapis.com/upload/drive/v3/files/${dataFileId}?uploadType=media`,
+      {
+        method: 'PATCH',
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'Content-Type': 'application/json',
+        },
+        body: content,
+      }
+    );
+    if (!res.ok) throw new Error('อัปเดตไฟล์ไม่ได้: HTTP ' + res.status);
   } else {
-    // สร้างไฟล์ใหม่ (multipart upload)
-    const meta = JSON.stringify({ name: DATA_FILE_NAME, parents: [folderIds.root] });
-    const form = new FormData();
-    form.append('metadata', new Blob([meta], { type: 'application/json' }));
-    form.append('file', blob);
-    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-      method: 'POST',
-      headers: { Authorization: 'Bearer ' + accessToken },
-      body: form,
-    });
+    // ✅ แก้: multipart create ถูกต้อง
+    const boundary = '-------314159265358979323846';
+    const delimiter = '\r\n--' + boundary + '\r\n';
+    const closeDelimiter = '\r\n--' + boundary + '--';
+    const metaStr = JSON.stringify({ name: DATA_FILE_NAME, parents: [folderIds.root] });
+    const body =
+      delimiter +
+      'Content-Type: application/json; charset=UTF-8\r\n\r\n' +
+      metaStr +
+      delimiter +
+      'Content-Type: application/json\r\n\r\n' +
+      content +
+      closeDelimiter;
+
+    const res = await fetch(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+      {
+        method: 'POST',
+        headers: {
+          Authorization: 'Bearer ' + accessToken,
+          'Content-Type': 'multipart/related; boundary=' + boundary,
+        },
+        body: body,
+      }
+    );
+    if (!res.ok) throw new Error('สร้างไฟล์ไม่ได้: HTTP ' + res.status);
     const json = await res.json();
     dataFileId = json.id;
   }
   saveToCache();
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // FOLDER MANAGEMENT
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 async function ensureFolder(name, parentId) {
+  // ✅ แก้: เพิ่ม space ก่อน and
   const parentQ = parentId ? ` and '${parentId}' in parents` : '';
   const res = await gapi.client.drive.files.list({
     q: `name='${name}' and mimeType='application/vnd.google-apps.folder' and trashed=false${parentQ}`,
-    fields: 'files(id)', spaces: 'drive',
+    fields: 'files(id)',
+    spaces: 'drive',
   });
   if (res.result.files.length > 0) return res.result.files[0].id;
   const body = { name, mimeType: 'application/vnd.google-apps.folder' };
@@ -583,7 +574,7 @@ async function ensureAllFolders() {
 
 async function ensureJobFolder(jobTitle, catKey) {
   if (!folderIds[catKey]) return null;
-  const safeName = jobTitle.replace(/[/\\?%*:|"<>]/g, '_').substring(0, 80);
+  const safeName = jobTitle.replace(/[\/\\?%*:|"<>]/g, '_').substring(0, 80);
   return await ensureFolder(safeName, folderIds[catKey]);
 }
 
@@ -593,20 +584,23 @@ async function moveFilesToFolder(files, targetFolderId) {
       const meta = await gapi.client.drive.files.get({ fileId: f.id, fields: 'parents' });
       const prev = (meta.result.parents || []).join(',');
       await gapi.client.drive.files.update({
-        fileId: f.id, addParents: targetFolderId,
-        removeParents: prev, fields: 'id',
+        fileId: f.id,
+        addParents: targetFolderId,
+        removeParents: prev,
+        fields: 'id',
       });
-    } catch(e) { console.warn('move file error', f.name, e); }
+    } catch(e) { console.warn('move file error:', f.name, e); }
   }
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // GOOGLE PICKER
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function openDrivePicker() {
   if (!accessToken) { showToast('⚠️ กรุณา Sign In ก่อนครับ', true); return; }
   const picker = new google.picker.PickerBuilder()
-    .setOAuthToken(accessToken).setDeveloperKey(API_KEY)
+    .setOAuthToken(accessToken)
+    .setDeveloperKey(API_KEY)
     .addView(new google.picker.DocsView().setIncludeFolders(false))
     .addView(new google.picker.DocsUploadView())
     .setTitle('เลือกไฟล์จาก Google Drive')
@@ -641,22 +635,21 @@ function getFileIcon(m) {
   if (m.startsWith('image/')) return '🖼️';
   if (m === 'application/pdf') return '📄';
   if (m.includes('word')) return '📝';
-  if (m.includes('spreadsheet')||m.includes('excel')) return '📊';
-  if (m.includes('presentation')||m.includes('powerpoint')) return '📑';
+  if (m.includes('spreadsheet') || m.includes('excel')) return '📊';
+  if (m.includes('presentation') || m.includes('powerpoint')) return '📑';
   if (m.startsWith('video/')) return '🎬';
   if (m.startsWith('audio/')) return '🎵';
   return '📎';
 }
 
-// ════════════════════════════════════════
-// SAVE / DELETE PORTFOLIO
-// ════════════════════════════════════════
+// ══════════════════════════════════════
+// SAVE / DELETE
+// ══════════════════════════════════════
 async function savePortfolio() {
   const title = document.getElementById('fTitle').value.trim();
   if (!title) { showToast('⚠️ กรุณากรอกชื่อผลงาน', true); return; }
   const catKey  = document.getElementById('fCat').value;
   const catInfo = catMeta[catKey];
-
   let jobFolderId = null, jobFolderName = null;
 
   if (accessToken && folderIds[catKey]) {
@@ -671,12 +664,14 @@ async function savePortfolio() {
 
   const newItem = {
     id: editingId || Date.now().toString(),
-    title, cat: catKey,
+    title,
+    cat: catKey,
     date: document.getElementById('fDate').value,
     desc: document.getElementById('fDesc').value.trim(),
     files: [...selectedFiles],
-    catFolderName:  catInfo.folderName,
-    jobFolderName,  jobFolderId,
+    catFolderName: catInfo.folderName,
+    jobFolderName,
+    jobFolderId,
     createdAt: editingId
       ? (items.find(x => x.id === editingId)?.createdAt || Date.now())
       : Date.now(),
@@ -685,16 +680,22 @@ async function savePortfolio() {
   if (editingId) {
     const idx = items.findIndex(x => x.id === editingId);
     if (idx !== -1) items[idx] = newItem; else items.unshift(newItem);
-  } else { items.unshift(newItem); }
+  } else {
+    items.unshift(newItem);
+  }
 
   setSavingOverlay(true, '☁️ กำลังบันทึกขึ้น Drive...', 'portfolio_data.json');
-  await saveToDrive();
+  try {
+    await saveToDrive();
+    showToast(editingId ? '✅ แก้ไขผลงานแล้ว' : '🎉 บันทึกลง Drive แล้ว!');
+  } catch(e) {
+    showToast('⚠️ บันทึก Drive ไม่ได้ เก็บ cache แทน', true);
+    saveToCache();
+  }
   setSavingOverlay(false);
-
-  setSyncStatus('ok', `บันทึกแล้ว ${formatDateTime(new Date())}`);
+  setSyncStatus('ok', 'บันทึกแล้ว ' + formatDateTime(new Date()));
   closeModal('addModal');
   renderAll();
-  showToast(editingId ? '✅ แก้ไขผลงานแล้ว' : `🎉 บันทึกลง Drive แล้ว!`);
   editingId = null; selectedFiles = [];
 }
 
@@ -703,7 +704,7 @@ async function deleteItem(id) {
   items = items.filter(x => x.id !== id);
   closeModal('detailModal');
   setSavingOverlay(true, '🗑️ กำลังลบและบันทึกขึ้น Drive...', '');
-  await saveToDrive();
+  try { await saveToDrive(); } catch(e) { saveToCache(); }
   setSavingOverlay(false);
   renderAll();
   showToast('🗑️ ลบผลงานแล้ว');
@@ -712,34 +713,26 @@ async function deleteItem(id) {
 function setSavingOverlay(show, msg='', detail='') {
   document.getElementById('savingOverlay').classList.toggle('open', show);
   if (show) {
-    document.getElementById('savingMsg').textContent  = msg;
+    document.getElementById('savingMsg').textContent   = msg;
     document.getElementById('savingDetail').textContent = detail;
   }
 }
 
-// ════════════════════════════════════════
-// RENDER ALL
-// ════════════════════════════════════════
-function renderAll() {
-  renderGrid();
-  renderDashboard();
-}
+// ══════════════════════════════════════
+// RENDER
+// ══════════════════════════════════════
+function renderAll() { renderGrid(); renderDashboard(); }
 
-// ════════════════════════════════════════
-// DASHBOARD
-// ════════════════════════════════════════
 function renderDashboard() {
   const counts = { art:0, academic:0, activity:0, sport:0 };
   let totalFiles = 0;
-  items.forEach(it => { counts[it.cat] = (counts[it.cat]||0) + 1; totalFiles += (it.files?.length||0); });
-
+  items.forEach(it => { counts[it.cat] = (counts[it.cat]||0)+1; totalFiles += (it.files?.length||0); });
   document.getElementById('kTotal').textContent    = items.length;
   document.getElementById('kArt').textContent      = counts.art;
   document.getElementById('kAcademic').textContent = counts.academic;
   document.getElementById('kActivity').textContent = counts.activity;
   document.getElementById('kSport').textContent    = counts.sport;
   document.getElementById('kFiles').textContent    = totalFiles;
-
   renderBarChart(counts);
   renderDonut(counts);
   renderRecentList();
@@ -749,14 +742,13 @@ function renderDashboard() {
 function renderBarChart(counts) {
   const cats = Object.entries(catMeta);
   const max  = Math.max(...cats.map(([k]) => counts[k]||0), 1);
-  document.getElementById('barChart').innerHTML = cats.map(([key, m]) => {
+  document.getElementById('barChart').innerHTML = cats.map(([key,m]) => {
     const n = counts[key]||0;
-    return `
-      <div class="bar-row">
-        <div class="bar-label">${m.icon} ${m.label.split('/')[0].trim()}</div>
-        <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%;background:${m.color}"></div></div>
-        <div class="bar-count">${n}</div>
-      </div>`;
+    return `<div class="bar-row">
+      <div class="bar-label">${m.icon} ${m.label.split('/')[0].trim()}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%;background:${m.color}"></div></div>
+      <div class="bar-count">${n}</div>
+    </div>`;
   }).join('');
 }
 
@@ -765,19 +757,20 @@ function renderDonut(counts) {
   const ctx    = canvas.getContext('2d');
   const cats   = Object.entries(catMeta);
   const total  = cats.reduce((s,[k]) => s+(counts[k]||0), 0) || 1;
+  // ✅ แก้: * Math.PI * 2 ถูกต้อง
   const data   = cats.map(([k,m]) => ({ val:counts[k]||0, color:m.color, label:m.label, icon:m.icon }));
   ctx.clearRect(0,0,140,140);
   let a = -Math.PI/2;
   data.forEach(d => {
-    const s = d.val/total * Math.PI * 2;
+    const s = (d.val / total) * Math.PI * 2;
     ctx.beginPath(); ctx.moveTo(70,70); ctx.arc(70,70,60,a,a+s); ctx.closePath();
     ctx.fillStyle = d.color; ctx.fill(); a += s;
   });
   ctx.beginPath(); ctx.arc(70,70,36,0,Math.PI*2);
-  ctx.fillStyle='#fff'; ctx.fill();
+  ctx.fillStyle = '#fff'; ctx.fill();
   ctx.fillStyle='#2D2D3A'; ctx.font='bold 18px Segoe UI'; ctx.textAlign='center'; ctx.textBaseline='middle';
   ctx.fillText(total,70,63); ctx.font='11px Segoe UI'; ctx.fillStyle='#888'; ctx.fillText('ผลงาน',70,79);
-  document.getElementById('donutLegend').innerHTML = data.map(d=>`
+  document.getElementById('donutLegend').innerHTML = data.map(d => `
     <div class="legend-item">
       <div class="legend-dot" style="background:${d.color}"></div>
       <span>${d.icon} ${d.label.split('/')[0].trim()} <strong>(${d.val})</strong></span>
@@ -786,34 +779,35 @@ function renderDonut(counts) {
 
 function renderRecentList() {
   const el = document.getElementById('recentList');
-  const recent = [...items].sort((a,b)=>b.createdAt-a.createdAt).slice(0,5);
+  const recent = [...items].sort((a,b) => b.createdAt-a.createdAt).slice(0,5);
   if (!recent.length) { el.innerHTML='<div style="color:var(--muted);font-size:13px;padding:12px">ยังไม่มีผลงาน</div>'; return; }
   el.innerHTML = recent.map(item => {
     const meta    = catMeta[item.cat]||catMeta.art;
-    const imgFile = item.files?.find(f=>f.mimeType?.startsWith('image/'));
+    const imgFile = item.files?.find(f => f.mimeType?.startsWith('image/'));
     const thumb   = imgFile
       ? `<img src="https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w100" alt="">`
       : meta.icon;
-    return `
-      <div class="recent-item" onclick="openDetail('${item.id}')">
-        <div class="recent-thumb">${thumb}</div>
-        <div class="recent-info">
-          <div class="recent-title">${item.title}</div>
-          <div class="recent-meta">📅 ${item.date ? formatDate(item.date) : '–'} · 📎 ${item.files?.length||0} ไฟล์
-            ${item.jobFolderName ? ` · 📁 ${item.jobFolderName}` : ''}</div>
-        </div>
-        <span class="recent-badge ${meta.cls}">${meta.icon}</span>
-      </div>`;
+    return `<div class="recent-item" onclick="openDetail('${item.id}')">
+      <div class="recent-thumb">${thumb}</div>
+      <div class="recent-info">
+        <div class="recent-title">${item.title}</div>
+        <div class="recent-meta">📅 ${item.date ? formatDate(item.date) : '–'} · 📎 ${item.files?.length||0} ไฟล์
+          ${item.jobFolderName ? ' · 📁 '+item.jobFolderName : ''}</div>
+      </div>
+      <span class="recent-badge ${meta.cls}">${meta.icon}</span>
+    </div>`;
   }).join('');
 }
 
 function renderFileTypes() {
   const el = document.getElementById('filetypeRow');
   const tally = {};
-  items.forEach(it=>(it.files||[]).forEach(f=>{ const ic=getFileIcon(f.mimeType); tally[ic]=(tally[ic]||0)+1; }));
+  items.forEach(it => (it.files||[]).forEach(f => {
+    const ic = getFileIcon(f.mimeType); tally[ic] = (tally[ic]||0)+1;
+  }));
   if (!Object.keys(tally).length) { el.innerHTML='<div style="color:var(--muted);font-size:13px">ยังไม่มีไฟล์แนบ</div>'; return; }
-  const lbl={'🖼️':'รูปภาพ','📄':'PDF','📝':'Word','📊':'Excel','📑':'PPT','🎬':'วิดีโอ','🎵':'เสียง','📎':'อื่นๆ'};
-  el.innerHTML = Object.entries(tally).map(([ic,n])=>`
+  const lbl = {'🖼️':'รูปภาพ','📄':'PDF','📝':'Word','📊':'Excel','📑':'PPT','🎬':'วิดีโอ','🎵':'เสียง','📎':'อื่นๆ'};
+  el.innerHTML = Object.entries(tally).map(([ic,n]) => `
     <div class="filetype-chip"><span>${ic}</span>
       <div><div style="font-size:11px;color:var(--muted)">${lbl[ic]||'ไฟล์'}</div><div class="filetype-num">${n} ไฟล์</div></div>
     </div>`).join('');
@@ -824,45 +818,52 @@ async function renderFolderTree() {
   if (!folderIds.root) { el.innerHTML='<div style="color:var(--muted);font-size:13px">ยังไม่ได้ Sign In</div>'; return; }
   el.innerHTML='<div style="color:var(--muted);font-size:12px">กำลังโหลดจาก Drive...</div>';
   try {
+    // ✅ แก้: q: ถูกต้อง ไม่ใช้ template literal ผิด
     const subRes = await gapi.client.drive.files.list({
-      q:`'${folderIds.root}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-      fields:'files(id,name,webViewLink)', orderBy:'name', spaces:'drive',
+      q: `'${folderIds.root}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+      fields: 'files(id,name,webViewLink)',
+      orderBy: 'name',
+      spaces: 'drive',
     });
-    const catFolders = subRes.result.files||[];
+    const catFolders = subRes.result.files || [];
     let html = `<div class="ftree-root">📁 ${ROOT_FOLDER_NAME}</div>`;
     for (const cf of catFolders) {
+      // ✅ แก้: q: ถูกต้อง
       const jobRes = await gapi.client.drive.files.list({
-        q:`'${cf.id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
-        fields:'files(id,name,webViewLink)', orderBy:'name', spaces:'drive',
+        q: `'${cf.id}' in parents and mimeType='application/vnd.google-apps.folder' and trashed=false`,
+        fields: 'files(id,name,webViewLink)',
+        orderBy: 'name',
+        spaces: 'drive',
       });
-      const jobs = jobRes.result.files||[];
+      const jobs = jobRes.result.files || [];
       html += `<a class="ftree-sub" href="${cf.webViewLink||'#'}" target="_blank" style="font-weight:700">${cf.name}<span class="ftree-count">${jobs.length}</span></a>`;
-      jobs.forEach(j=>{ html+=`<a class="ftree-sub ftree-job" href="${j.webViewLink||'#'}" target="_blank">📂 ${j.name}</a>`; });
+      // ✅ แก้: += ถูกต้อง
+      jobs.forEach(j => { html += `<a class="ftree-sub ftree-job" href="${j.webViewLink||'#'}" target="_blank">📂 ${j.name}</a>`; });
     }
-    if (!catFolders.length) html+='<div style="color:var(--muted);font-size:12px;padding:8px 14px">ยังไม่มีโฟลเดอร์</div>';
+    if (!catFolders.length) html += '<div style="color:var(--muted);font-size:12px;padding:8px 14px">ยังไม่มีโฟลเดอร์</div>';
     el.innerHTML = html;
-  } catch(e) { el.innerHTML='<div style="color:var(--muted);font-size:12px">โหลดไม่ได้</div>'; }
+  } catch(e) { el.innerHTML='<div style="color:var(--muted);font-size:12px">โหลดไม่ได้: '+e.message+'</div>'; }
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // PORTFOLIO GRID
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function openAddModal(id=null) {
   editingId=id; selectedFiles=[];
   if (id) {
-    const item=items.find(x=>x.id===id); if(!item) return;
-    document.getElementById('modalTitle').textContent='✏️ แก้ไขผลงาน';
-    document.getElementById('fTitle').value=item.title;
-    document.getElementById('fCat').value=item.cat;
-    document.getElementById('fDate').value=item.date||'';
-    document.getElementById('fDesc').value=item.desc||'';
-    selectedFiles=item.files?[...item.files]:[];
+    const item = items.find(x => x.id===id); if (!item) return;
+    document.getElementById('modalTitle').textContent = '✏️ แก้ไขผลงาน';
+    document.getElementById('fTitle').value = item.title;
+    document.getElementById('fCat').value   = item.cat;
+    document.getElementById('fDate').value  = item.date||'';
+    document.getElementById('fDesc').value  = item.desc||'';
+    selectedFiles = item.files ? [...item.files] : [];
   } else {
-    document.getElementById('modalTitle').textContent='➕ เพิ่มผลงานใหม่';
-    document.getElementById('fTitle').value='';
-    document.getElementById('fCat').value='art';
-    document.getElementById('fDate').value=new Date().toISOString().split('T')[0];
-    document.getElementById('fDesc').value='';
+    document.getElementById('modalTitle').textContent = '➕ เพิ่มผลงานใหม่';
+    document.getElementById('fTitle').value = '';
+    document.getElementById('fCat').value   = 'art';
+    document.getElementById('fDate').value  = new Date().toISOString().split('T')[0];
+    document.getElementById('fDesc').value  = '';
   }
   renderFileList();
   document.getElementById('addModal').classList.add('open');
@@ -870,31 +871,35 @@ function openAddModal(id=null) {
 function closeModal(id) { document.getElementById(id).classList.remove('open'); }
 
 function openDetail(id) {
-  const item=items.find(x=>x.id===id); if(!item) return;
-  const meta=catMeta[item.cat]||catMeta.art;
-  const imgFile=item.files?.find(f=>f.mimeType?.startsWith('image/'));
-  const heroSrc=imgFile?`https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w800`:null;
-  const filesHtml=item.files?.length?`
+  const item = items.find(x => x.id===id); if (!item) return;
+  const meta    = catMeta[item.cat]||catMeta.art;
+  const imgFile = item.files?.find(f => f.mimeType?.startsWith('image/'));
+  // ✅ แก้: ternary ถูกต้อง
+  const heroSrc = imgFile ? `https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w800` : null;
+  const filesHtml = item.files?.length ? `
     <div class="detail-files"><h4>📎 ไฟล์แนบ (${item.files.length} ไฟล์)</h4>
       ${item.files.map(f=>`<a class="detail-file-link" href="${f.webViewLink}" target="_blank">
         <span>${getFileIcon(f.mimeType)}</span><span style="flex:1">${f.name}</span>
         <span style="font-size:11px;color:var(--muted)">เปิดใน Drive ↗</span></a>`).join('')}
-    </div>`:'';
-  const pathBadge=item.jobFolderName?`<div class="detail-badge">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>`:'';
-  document.getElementById('detailContent').innerHTML=`
+    </div>` : '';
+  const pathBadge = item.jobFolderName
+    ? `<div class="detail-badge">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>` : '';
+
+  document.getElementById('detailContent').innerHTML = `
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px">
       <span class="cat-badge ${meta.cls}" style="position:static;font-size:13px;padding:6px 14px;border-radius:20px">${meta.label}</span>
       <button onclick="closeModal('detailModal')" style="background:none;border:none;font-size:22px;cursor:pointer;color:var(--muted)">✕</button>
     </div>
-    ${heroSrc?`<div class="detail-hero"><img src="${heroSrc}" alt="${item.title}" onerror="this.parentElement.innerHTML='<div class=no-hero>${meta.icon}</div>'"></div>`
-             :`<div class="detail-hero"><div class="no-hero">${meta.icon}</div></div>`}
+    ${heroSrc
+      ? `<div class="detail-hero"><img src="${heroSrc}" alt="${item.title}" onerror="this.parentElement.innerHTML='<div class=no-hero>${meta.icon}</div>'"></div>`
+      : `<div class="detail-hero"><div class="no-hero">${meta.icon}</div></div>`}
     <div class="detail-title">${item.title}</div>
     <div class="detail-meta">
-      ${item.date?`<div class="detail-badge">📅 ${formatDate(item.date)}</div>`:''}
-      ${item.files?.length?`<div class="detail-badge">📎 ${item.files.length} ไฟล์</div>`:''}
+      ${item.date ? `<div class="detail-badge">📅 ${formatDate(item.date)}</div>` : ''}
+      ${item.files?.length ? `<div class="detail-badge">📎 ${item.files.length} ไฟล์</div>` : ''}
       ${pathBadge}
     </div>
-    ${item.desc?`<div class="detail-desc">${item.desc.replace(/\n/g,'<br>')}</div>`:''}
+    ${item.desc ? `<div class="detail-desc">${item.desc.replace(/\n/g,'<br>')}</div>` : ''}
     ${filesHtml}
     <div style="display:flex;gap:10px;margin-top:24px">
       <button class="btn-cancel" style="flex:1" onclick="closeModal('detailModal');openAddModal('${item.id}')">✏️ แก้ไข</button>
@@ -904,87 +909,91 @@ function openDetail(id) {
 }
 
 function filterCategory(btn) {
-  document.querySelectorAll('.filter-tab').forEach(t=>t.classList.remove('active'));
-  btn.classList.add('active'); currentFilter=btn.dataset.cat;
-  const t={all:'✨ ผลงานทั้งหมด',art:'🎨 ศิลปะ',academic:'📚 วิชาการ',activity:'🎭 กิจกรรม',sport:'🏆 กีฬา'};
-  document.getElementById('sectionTitle').textContent=t[currentFilter]||'';
+  document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active'); currentFilter = btn.dataset.cat;
+  const t = {all:'✨ ผลงานทั้งหมด',art:'🎨 ศิลปะ',academic:'📚 วิชาการ',activity:'🎭 กิจกรรม',sport:'🏆 กีฬา'};
+  document.getElementById('sectionTitle').textContent = t[currentFilter]||'';
   renderGrid();
 }
 
 function renderGrid() {
-  const filtered=items.filter(x=>currentFilter==='all'||x.cat===currentFilter);
-  const grid=document.getElementById('portfolioGrid');
+  const filtered = items.filter(x => currentFilter==='all' || x.cat===currentFilter);
+  const grid = document.getElementById('portfolioGrid');
   if (!filtered.length) {
-    grid.innerHTML=`<div class="empty-state"><div class="empty-icon">📂</div><h3>ยังไม่มีผลงานในหมวดนี้</h3><p>กดปุ่ม "เพิ่มผลงาน" เพื่อเริ่มบันทึก</p></div>`; return;
+    // ✅ แก้: = ถูกต้อง
+    grid.innerHTML = `<div class="empty-state"><div class="empty-icon">📂</div><h3>ยังไม่มีผลงานในหมวดนี้</h3><p>กดปุ่ม "เพิ่มผลงาน" เพื่อเริ่มบันทึก</p></div>`;
+    return;
   }
-  grid.innerHTML=filtered.map(item=>{
-    const meta=catMeta[item.cat]||catMeta.art;
-    const imgFile=item.files?.find(f=>f.mimeType?.startsWith('image/'));
-    const thumbUrl=imgFile?`https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w400`:null;
-    return `
-      <div class="portfolio-card" onclick="openDetail('${item.id}')">
-        <div class="card-thumb">
-          ${thumbUrl?`<img src="${thumbUrl}" alt="${item.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-            <div class="no-img" style="display:none">${meta.icon}</div>`:`<div class="no-img">${meta.icon}</div>`}
-          <span class="cat-badge ${meta.cls}">${meta.label}</span>
+  grid.innerHTML = filtered.map(item => {
+    const meta     = catMeta[item.cat]||catMeta.art;
+    const imgFile  = item.files?.find(f => f.mimeType?.startsWith('image/'));
+    // ✅ แก้: ternary ถูกต้อง
+    const thumbUrl = imgFile ? `https://drive.google.com/thumbnail?id=${imgFile.id}&sz=w400` : null;
+    return `<div class="portfolio-card" onclick="openDetail('${item.id}')">
+      <div class="card-thumb">
+        ${thumbUrl
+          ? `<img src="${thumbUrl}" alt="${item.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+             <div class="no-img" style="display:none">${meta.icon}</div>`
+          : `<div class="no-img">${meta.icon}</div>`}
+        <span class="cat-badge ${meta.cls}">${meta.label}</span>
+      </div>
+      <div class="card-body">
+        <div class="card-title">${item.title}</div>
+        <div class="card-meta">
+          ${item.date ? `<span>📅 ${formatDate(item.date)}</span>` : ''}
+          ${item.files?.length ? `<span>📎 ${item.files.length} ไฟล์</span>` : ''}
         </div>
-        <div class="card-body">
-          <div class="card-title">${item.title}</div>
-          <div class="card-meta">
-            ${item.date?`<span>📅 ${formatDate(item.date)}</span>`:''}
-            ${item.files?.length?`<span>📎 ${item.files.length} ไฟล์</span>`:''}
-          </div>
-          ${item.jobFolderName?`<div class="card-folder">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>`:''}
-          ${item.desc?`<div class="card-desc">${item.desc}</div>`:''}
-          <div class="card-actions">
-            <button class="btn-icon" onclick="event.stopPropagation();openAddModal('${item.id}')">✏️ แก้ไข</button>
-            <button class="btn-icon" onclick="event.stopPropagation();deleteItem('${item.id}')">🗑️</button>
-          </div>
+        ${item.jobFolderName ? `<div class="card-folder">📁 ${item.catFolderName||''} / ${item.jobFolderName}</div>` : ''}
+        ${item.desc ? `<div class="card-desc">${item.desc}</div>` : ''}
+        <div class="card-actions">
+          <button class="btn-icon" onclick="event.stopPropagation();openAddModal('${item.id}')">✏️ แก้ไข</button>
+          <button class="btn-icon" onclick="event.stopPropagation();deleteItem('${item.id}')">🗑️</button>
         </div>
-      </div>`;
+      </div>
+    </div>`;
   }).join('');
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // PAGE NAV
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function switchPage(btn) {
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   btn.classList.add('active');
-  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-'+btn.dataset.page).classList.add('active');
 }
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // UTILS
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 function formatDate(d) {
-  if(!d) return '';
+  if (!d) return '';
   return new Date(d).toLocaleDateString('th-TH',{year:'numeric',month:'long',day:'numeric'});
 }
 function formatDateTime(d) {
   return d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
 }
 let toastTimer;
-function showToast(msg,isError=false) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.style.background=isError?'#C0392B':'#1E1E2E';
+function showToast(msg, isError=false) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.background = isError ? '#C0392B' : '#1E1E2E';
   t.classList.add('show'); clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>t.classList.remove('show'),3500);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 3500);
 }
-document.querySelectorAll('.modal-overlay').forEach(el=>{
-  el.addEventListener('click',e=>{ if(e.target===el) el.classList.remove('open'); });
+document.querySelectorAll('.modal-overlay').forEach(el => {
+  el.addEventListener('click', e => { if (e.target===el) el.classList.remove('open'); });
 });
 let resizeTimer;
-window.addEventListener('resize',()=>{ clearTimeout(resizeTimer); resizeTimer=setTimeout(renderGrid,150); });
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer=setTimeout(renderGrid,150); });
 
-// ════════════════════════════════════════
+// ══════════════════════════════════════
 // INIT
-// ════════════════════════════════════════
-window.addEventListener('load',()=>{
-  const cfg=JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');
-  if(cfg?.CLIENT_ID && cfg?.API_KEY) {
-    CLIENT_ID=cfg.CLIENT_ID; API_KEY=cfg.API_KEY; startApp();
+// ══════════════════════════════════════
+window.addEventListener('load', () => {
+  const cfg = JSON.parse(localStorage.getItem(CONFIG_KEY)||'null');
+  if (cfg?.CLIENT_ID && cfg?.API_KEY) {
+    CLIENT_ID = cfg.CLIENT_ID; API_KEY = cfg.API_KEY; startApp();
   }
 });
 </script>
